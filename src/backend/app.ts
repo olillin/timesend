@@ -3,6 +3,7 @@ import fs from 'fs'
 import http from 'http'
 import https from 'https'
 import { ENVIRONMENT } from './environment'
+import api from './router/api'
 
 // Paths
 const PUBLIC_DIRECTORY = 'public'
@@ -15,6 +16,9 @@ if (fs.existsSync(PUBLIC_DIRECTORY)) {
 } else {
     console.warn('WARNING: No public directory')
 }
+
+// Add API router
+app.use('/', api)
 
 // Start server
 var server
