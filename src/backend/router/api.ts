@@ -1,9 +1,9 @@
 import { Router } from "express"
-import authorize from "../routes/authorize"
-import callback from "../routes/callback"
+import * as routes from "../routes"
+import * as middleware from "../middleware"
 
 const api = Router()
 export default api
 
-api.get('/authorize', authorize)
-api.get('/callback', callback)
+api.get('/callback', routes.callback)
+api.get('/calendars', middleware.authorize, routes.calendars)

@@ -1,3 +1,4 @@
+import cookieSession from 'cookie-session'
 import express from 'express'
 import fs from 'fs'
 import http from 'http'
@@ -10,6 +11,12 @@ const PUBLIC_DIRECTORY = 'public'
 
 // Setup express app
 const app = express()
+
+const ONE_DAY = 24 * 60 * 60 * 1000
+app.use(cookieSession({
+    keys: [ENVIRONMENT.SECRET],
+    maxAge: ONE_DAY,
+}))
 
 if (fs.existsSync(PUBLIC_DIRECTORY)) {
     app.use('/', express.static(PUBLIC_DIRECTORY))

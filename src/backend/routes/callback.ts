@@ -1,5 +1,6 @@
 import { Request, Response } from "express"
-import { createAuthenticatedClient, listEvents } from "../googleCalendar"
+import { createClient } from "../google/auth"
+import { setSessionTokens } from "../session"
 
 export default async (req: Request, res: Response) => {
     const qs = new URL(req.url, 'http://localhost:3000')
@@ -9,20 +10,24 @@ export default async (req: Request, res: Response) => {
     }
     const code = qs.get('code')!
 
-    const oAuth2Client = await createAuthenticatedClient(code)
-        .catch(error => {
-            return null
-        })
+    const client = await createClient()
+    const tokens = await client.getToken(code)
+        .then(tokenRes => tokenRes.tokens)
+        .catch(() => null)
 
-    if (!oAuth2Client) {
+    if (!tokens) {
         res.status(401).end('Failed to authenticate, the code may be invalid or expired.')
         return
     }
 
-    res.end('Authentication successful! Please return to the console.')
+    setSessionTokens(req, tokens)
 
     console.info('Client authenticated.')
 
-    console.log('Upcoming events:')
-    console.log(await listEvents(oAuth2Client))
+    let redirectTo = '/calendars'
+    if (!qs.has('state')) {
+        redirectTo = qs.get('state')!
+        console.log(`Returning to ${redirectTo}`)
+    }
+    res.redirect(redirectTo)
 }

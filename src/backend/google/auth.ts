@@ -1,11 +1,12 @@
 import fs from 'fs/promises'
-import { auth, OAuth2Client, OAuth2ClientOptions } from 'google-auth-library'
-import { google } from 'googleapis'
+import { auth, Credentials, OAuth2Client, OAuth2ClientOptions } from 'google-auth-library'
+import { calendar_v3, google } from 'googleapis'
 import path from 'path'
 import process from 'process'
 
 const SCOPES = [
-    'https://www.googleapis.com/auth/calendar.readonly'
+    'https://www.googleapis.com/auth/calendar.events.owned',
+    'https://www.googleapis.com/auth/calendar.calendarlist.readonly',
 ]
 const CREDENTIALS_PATH = path.join(process.cwd(), '../credentials.json')
 
@@ -54,49 +55,22 @@ export async function createClient(): Promise<OAuth2Client> {
 
 /**
  * Create a OAuth2 client which has been authorized with the OAuth2 flow.
- * @param code the 'code' parameter on the authentication response.
+ * @param credentials the tokens previously created by the client.
  */
-export async function createAuthenticatedClient(code: string): Promise<OAuth2Client> {
+export async function recreateAuthenticatedClient(credentials: Credentials): Promise<OAuth2Client> {
     const client = await createClient()
-
-    const tokenResponse = await client.getToken(code)
-    client.setCredentials(tokenResponse.tokens)
-
+    client.setCredentials(credentials)
     return client
 }
 
-export function generateAuthUrl(client: OAuth2Client) {
+export function generateAuthUrl(client: OAuth2Client, state?: string) {
     const authorizeUrl = client.generateAuthUrl({
         scope: SCOPES,
+        state,
     })
     return authorizeUrl
 }
 
 export async function createAuthUrl() {
     return generateAuthUrl(await createClient())
-}
-
-/**
- * Lists the next 10 events on the user's primary calendar.
- * @param auth An authorized OAuth2 client.
- */
-export async function listEvents(auth: OAuth2Client): Promise<string> {
-    //@ts-ignore
-    const calendar = google.calendar({ version: 'v3', auth })
-    const res = await calendar.events.list({
-        calendarId: 'primary',
-        timeMin: new Date().toISOString(),
-        maxResults: 10,
-        singleEvents: true,
-        orderBy: 'startTime',
-    })
-    const events = res.data.items
-    if (!events || events.length === 0) {
-        return 'No upcoming events found.'
-    }
-
-    return events.map(event => {
-        const start = event.start!.dateTime ?? event.start!.date!
-        return `${start} - ${event.summary}`
-    }).join('\n')
 }
