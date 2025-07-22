@@ -24,7 +24,7 @@ export default async (req: Request, res: Response) => {
 
     console.info('Client authenticated.')
 
-    let redirectTo = '/calendars'
+    let redirectTo = '/p/selectCalendar'
     if (!qs.has('state')) {
         redirectTo = qs.get('state')!
         console.log(`Returning to ${redirectTo}`)

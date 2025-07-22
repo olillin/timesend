@@ -3,8 +3,10 @@ import express from 'express'
 import fs from 'fs'
 import http from 'http'
 import https from 'https'
+import path from 'path'
 import { ENVIRONMENT } from './environment'
-import api from './router/api'
+import * as middleware from './middleware'
+import rootRouter from './router/root'
 
 // Paths
 const PUBLIC_DIRECTORY = 'public'
@@ -18,14 +20,19 @@ app.use(cookieSession({
     maxAge: ONE_DAY,
 }))
 
+app.use(middleware.debug)
+
+app.use('/', rootRouter)
+
 if (fs.existsSync(PUBLIC_DIRECTORY)) {
+    app.use('/privileged', (req, res) => {
+        res.status(404).end()
+    })
     app.use('/', express.static(PUBLIC_DIRECTORY))
+    app.use('/p', middleware.authorizeRedirect, express.static(path.join(PUBLIC_DIRECTORY, 'privileged')))
 } else {
     console.warn('WARNING: No public directory')
 }
-
-// Add API router
-app.use('/', api)
 
 // Start server
 var server

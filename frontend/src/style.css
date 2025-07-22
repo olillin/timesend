@@ -1,0 +1,64 @@
+:root {
+    --cardBackground: white;
+    --errorColor: #f15;
+}
+
+body {
+    font-family: sans-serif;
+    padding: 2em;
+}
+
+.error {
+    color: var(--errorColor);
+}
+
+.calendarList {
+    display: flex;
+    flex-flow: column wrap;
+    max-height: 40em;
+}
+
+.calendarButton {
+    border-radius: 2em;
+    cursor: pointer;
+}
+
+.calendarCard {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    
+    padding: 0.5em;
+    background-color: var(--cardBackground);
+    border-radius: 2em;
+    margin: 0.5em;
+    box-shadow: 0px 2px 10px 0px #CCC;
+    
+    transition-duration: 1s;
+}
+
+.calendarButton:hover {
+    z-index: 10;
+}
+
+.calendarButton:hover .calendarCard {
+    transition-duration: 0s;
+    transform: scale(110%) rotateZ(1deg);
+    
+    color: var(--calendarForeground);
+    background-color: var(--calendarBackground);
+}
+
+.calendarButton .coloredDot {
+    background-color: var(--calendarBackground);
+    height: 1em;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    margin-right: 0.5em;
+    border: 0.1em solid var(--cardBackground);
+    box-shadow: 0 0 0.5em 0 var(--cardBackground);
+}
+
+.calendarButton .summary {
+    margin-right: 0.5em;
+}

@@ -4,11 +4,13 @@
   "description": "Send calendar events through a link",
   "main": "app.js",
   "scripts": {
-    "clean": "rimraf ./dist",
-    "build": "npm run clean && npm run buildBackend && npm run buildFrontend",
-    "buildBackend": "tsc --project tsconfig.backend.json",
-    "buildFrontend": "tsc --project tsconfig.frontend.json && npm run copyPublic && rimraf --glob ./dist/**/*.ts",
-    "copyPublic": "node -e \"require('fs').cpSync('./src/frontend', './dist/public', {recursive: true});\"",
+    "clean": "rimraf --glob ./dist ./**/dist",
+    "build": "npm run clean && npm run buildBackend && npm run buildFrontend && npm run combine",
+    "buildBackend": "cd backend && tsc",
+    "buildFrontend": "cd frontend && tsc && node -e \"require('fs').cpSync('./src', './dist', {recursive: true});\" && rimraf --glob ./dist/**/*.ts",
+    "combine": "npm run copyBackend && npm run copyFrontend",
+    "copyBackend": "node -e \"require('fs').cpSync('./backend/dist', './dist', {recursive: true});\"",
+    "copyFrontend": "node -e \"require('fs').cpSync('./frontend/dist', './dist/public', {recursive: true});\"",
     "start": "cd dist && node $([[ -f ../.env ]] && echo \"--env-file ../.env \")app.js ",
     "test": "jest"
   },

@@ -1,3 +1,4 @@
+import type { CalendarEntry } from "@shared"
 import { OAuth2Client } from "google-auth-library"
 import { calendar_v3, google } from "googleapis"
 
@@ -17,11 +18,6 @@ export interface APICalendar {
 }
 
 export type AccessRole = 'owner' | 'writer' | 'reader' | 'freeBusyReader'
-export interface CalendarEntry {
-    id: string
-    summary: string
-    color: string
-}
 
 /**
  * 
@@ -36,7 +32,8 @@ export async function listCalendars(auth: OAuth2Client): Promise<CalendarEntry[]
     }).map(calendar => ({
         id: calendar.id!,
         summary: calendar.summary!,
-        color: calendar.backgroundColor!,
+        backgroundColor: calendar.backgroundColor!,
+        foregroundColor: calendar.foregroundColor!,
     }))
     return calendars
 }

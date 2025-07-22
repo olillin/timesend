@@ -1,6 +1,5 @@
 import fs from 'fs/promises'
-import { auth, Credentials, OAuth2Client, OAuth2ClientOptions } from 'google-auth-library'
-import { calendar_v3, google } from 'googleapis'
+import { Credentials, OAuth2Client, OAuth2ClientOptions } from 'google-auth-library'
 import path from 'path'
 import process from 'process'
 
@@ -65,6 +64,7 @@ export async function recreateAuthenticatedClient(credentials: Credentials): Pro
 
 export function generateAuthUrl(client: OAuth2Client, state?: string) {
     const authorizeUrl = client.generateAuthUrl({
+        access_type: 'offline',
         scope: SCOPES,
         state,
     })

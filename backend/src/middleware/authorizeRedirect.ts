@@ -10,7 +10,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
         next()
     } catch (err) {
         console.log(`User is unauthorized (${(err as Error).message})`)
-        res.status(401)
         // Redirect to authorization
         const client = await createClient()
         const authUrl = generateAuthUrl(client, req.url)
