@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from "express"
-import { getSessionTokens } from "../session"
+import { CustomSession, getSessionTokens } from "../session"
 import { createClient, generateAuthUrl } from "../google/auth"
 
 export default async (req: Request, res: Response, next: NextFunction) => {

@@ -7,6 +7,7 @@ import path from 'path'
 import { ENVIRONMENT } from './environment'
 import * as middleware from './middleware'
 import rootRouter from './router/root'
+import bodyParser from 'body-parser'
 
 // Paths
 const PUBLIC_DIRECTORY = 'public'
@@ -21,6 +22,7 @@ app.use(cookieSession({
 }))
 
 app.use(middleware.debug)
+app.use(bodyParser.text({ type: 'text/calendar' }))
 
 app.use('/', rootRouter)
 
@@ -28,8 +30,8 @@ if (fs.existsSync(PUBLIC_DIRECTORY)) {
     app.use('/privileged', (req, res) => {
         res.status(404).end()
     })
-    app.use('/', express.static(PUBLIC_DIRECTORY))
-    app.use('/p', middleware.authorizeRedirect, express.static(path.join(PUBLIC_DIRECTORY, 'privileged')))
+    app.use('/', middleware.saveEvents, express.static(PUBLIC_DIRECTORY))
+    app.use('/p', middleware.saveEvents, middleware.authorizeRedirect, express.static(path.join(PUBLIC_DIRECTORY, 'privileged')))
 } else {
     console.warn('WARNING: No public directory')
 }

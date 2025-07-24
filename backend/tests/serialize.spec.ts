@@ -24,7 +24,7 @@ const exampleEvents1: CalendarEvent[] = [
         .setEnd(tomorrow, true),
 ]
 
-const exampleEvents2: CalendarEvent[] = [
+const exampleEvents2 = [
     new CalendarEvent(randomUUID(), now)
         .setSummary('Ansvar: Cal, Göken')
         .setStart(now, true)

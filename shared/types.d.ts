@@ -8,3 +8,7 @@ export interface CalendarEntry {
 export interface CalendarsResponse {
     calendars: CalendarEntry[]
 }
+
+export interface UploadResponse {
+    url: string
+}

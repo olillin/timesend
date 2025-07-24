@@ -1,7 +1,9 @@
 import { Router } from "express"
-import * as routes from "../routes"
+import * as middleware from "../middleware"
+import * as apiRoutes from "../routes/api"
 
 const api = Router()
 export default api
 
-api.get('/calendars', routes.calendars)
+api.get('/calendars', middleware.authorize401, apiRoutes.calendars)
+api.post('/upload', apiRoutes.upload)

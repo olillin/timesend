@@ -3,7 +3,8 @@ import { Credentials, OAuth2Client } from 'google-auth-library'
 import { recreateAuthenticatedClient } from './google/auth'
 
 export interface CustomSession {
-    tokens: Credentials
+    tokens: Credentials,
+    currentEvents: string,
 }
 
 export function setSessionTokens(req: Request, tokens: Credentials): void {
