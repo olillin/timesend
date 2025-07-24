@@ -2,9 +2,12 @@ import { UploadResponse } from "@shared"
 import { Request, Response } from "express"
 import { Calendar, parseCalendar } from "iamcal"
 import { serializeEvents } from "../../serialize"
+import { CALENDAR_MIME_TYPE } from "../../app"
 
 export default async (req: Request, res: Response) => {
-    if (req.headers["content-type"] !== 'text/calendar') {
+    res.setHeader('Accept', CALENDAR_MIME_TYPE)
+
+    if (req.headers["content-type"] !== CALENDAR_MIME_TYPE) {
         res.status(400).json({
             error: {
                 message: "Content-Type must be 'text/calendar'"

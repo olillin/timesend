@@ -22,7 +22,10 @@ app.use(cookieSession({
 }))
 
 app.use(middleware.debug)
-app.use(bodyParser.text({ type: 'text/calendar' }))
+
+app.use(bodyParser.json())
+export const CALENDAR_MIME_TYPE = 'text/calendar'
+app.use(bodyParser.text({ type: CALENDAR_MIME_TYPE }))
 
 app.use('/', rootRouter)
 
