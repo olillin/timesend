@@ -3,7 +3,7 @@ const config = {
         '^.+\\.ts?$': [
             'ts-jest',
             {
-                tsconfig: 'tsconfig.backend.json',
+                tsconfig: 'tsconfig.json',
             },
         ],
     },
