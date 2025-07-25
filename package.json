@@ -4,7 +4,7 @@
   "description": "Send calendar events through a link",
   "main": "app.js",
   "scripts": {
-    "clean": "rimraf --glob ./dist ./**/dist",
+    "clean": "rimraf --glob ./dist ./*/dist",
     "build": "npm run clean && npm run buildBackend && npm run buildFrontend && npm run combine",
     "buildBackend": "cd backend && tsc",
     "buildFrontend": "cd frontend && tsc && node -e \"require('fs').cpSync('./src', './dist', {recursive: true});\" && rimraf --glob ./dist/**/*.ts",
