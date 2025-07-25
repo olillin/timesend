@@ -46,6 +46,6 @@ export default async (req: Request, res: Response) => {
 
     await addEvents(auth, calendarId, events).then(response => {
         console.log(response)
-        res.end(response)
+        res.json(response)
     })
 }

@@ -1,4 +1,4 @@
-import type { CalendarEntry } from "@shared"
+import type { AddedEvent, CalendarEntry } from "@shared"
 import { OAuth2Client } from "google-auth-library"
 import { calendar_v3, google, GoogleApis } from "googleapis"
 import { CalendarEvent, parseDate, Property } from "iamcal"
@@ -91,10 +91,9 @@ function toGoogleEvent(event: CalendarEvent): calendar_v3.Schema$Event {
     return {
         start: toGoogleDate(event.getProperty('DTSTART')!),
         end: toGoogleDate(event.getProperty('DTEND')!),
-        summary: event.summary(),
-        description: event.description(),
-        created: event.created()?.toISOString(),
-
+        summary: event.getProperty('SUMMARY')?.value,
+        description: event.getProperty('DESCRIPTION')?.value,
+        location: event.location(),
     }
 }
 
@@ -103,7 +102,7 @@ function toGoogleEvent(event: CalendarEvent): calendar_v3.Schema$Event {
  * @param calendarId The Google Calendar id
  * @param auth An authorized OAuth2 client.
  */
-export async function addEvents(auth: OAuth2Client, calendarId: string, events: CalendarEvent[]): Promise<any> {
+export async function addEvents(auth: OAuth2Client, calendarId: string, events: CalendarEvent[]): Promise<AddedEvent[]> {
     return new Promise((resolve, reject) => {
         const calendar = authorizeGoogleCalendar(auth)
 
@@ -111,7 +110,19 @@ export async function addEvents(auth: OAuth2Client, calendarId: string, events: 
             const requestBody = toGoogleEvent(event)
             return calendar.events.insert({ calendarId, requestBody })
         })).then(responses => {
-            resolve(responses)
+            const events = responses.map((response): AddedEvent => {
+                const success = response.status === 200
+                const eventData = response.data
+                return {
+                    success,
+                    start: eventData.start!,
+                    end: eventData.end!,
+                    summary: eventData.summary ?? undefined,
+                    description: eventData.description ?? undefined,
+                    location: eventData.location ?? undefined,
+                }
+            })
+            resolve(events)
         }).catch(reason => {
             reject(reason)
         })

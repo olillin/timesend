@@ -1,9 +1,7 @@
-import { CalendarEvent, Component, Property } from "iamcal"
+import { CalendarEvent, Component, Property, toDateTimeString } from "iamcal"
 import pako from 'pako'
 
 const propertyShortNameMap: { [_: string]: string } = {
-    'UID': 'u',
-    'DTSTAMP': 't',
     'DTSTART': 's',
     'DTEND': 'e',
     'SUMMARY': 'm',
@@ -25,8 +23,8 @@ const dateProperties = new Set<string>([
  * Convert an event to a shorter representation than normal by taking some liberties.
  * 
  * Namely: 
- * - Only some select properties are supported. See {@link propertyShortNameMap}.
- * - Begin and end of the event block are omitted
+ * - Only the properties in {@link propertyShortNameMap} are preserved.
+ * - BEGIN and END lines of the VEVENT block are omitted
  *
  * @see {@link expandEvent}
  */
@@ -48,7 +46,20 @@ function shortenEvent(event: CalendarEvent): string {
  * @see {@link shortenEvent}
  */
 function expandEvent(body: string): CalendarEvent {
-    const props: Property[] = body.split('\n').map(line => {
+    const props: Property[] = [
+        {
+            name: 'UID',
+            params: [],
+            value: crypto.randomUUID(),
+        },
+        {
+            name: 'DTSTAMP',
+            params: [],
+            value: toDateTimeString(new Date()),
+        }
+    ]
+
+    body.split('\n').forEach(line => {
         const index = line.indexOf(':')
         const shortName = line.slice(0, index)
         const value = line.slice(index + 1)
@@ -68,7 +79,8 @@ function expandEvent(body: string): CalendarEvent {
             params,
             value,
         }
-        return prop
+
+        props.push(prop)
     })
 
     return new CalendarEvent(new Component('VEVENT', props))
