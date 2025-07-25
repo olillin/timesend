@@ -7,3 +7,4 @@ export default api
 
 api.get('/calendars', middleware.authorize401, apiRoutes.calendars)
 api.post('/upload', apiRoutes.upload)
+api.post('/events', middleware.authorize401, apiRoutes.addEvents)

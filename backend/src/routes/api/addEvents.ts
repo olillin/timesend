@@ -1,8 +1,8 @@
 import { Request, Response } from 'express'
-import { recreateAuthenticatedClient } from 'src/google/auth'
-import { addEvents } from 'src/google/calendar'
-import { deserializeEvents } from 'src/serialize'
-import { CustomSession, getSessionTokens } from 'src/session'
+import { recreateAuthenticatedClient } from '../../google/auth'
+import { addEvents } from '../../google/calendar'
+import { deserializeEvents } from '../../serialize'
+import { CustomSession, getSessionTokens } from '../../session'
 
 export default async (req: Request, res: Response) => {
     res.setHeader('Accept', 'application/json')
@@ -42,7 +42,7 @@ export default async (req: Request, res: Response) => {
 
     const auth = await recreateAuthenticatedClient(getSessionTokens(req))
 
-    await addEvents(auth, calendarId, events).then(res => {
-        // TODO: Respond to client
+    await addEvents(auth, calendarId, events).then(response => {
+        res.end(response)
     })
 }

@@ -26,6 +26,7 @@
     "cookie-session": "^2.1.1",
     "express": "^4.21.2",
     "google-auth-library": "^10.1.0",
+    "google-batch": "^0.0.8",
     "googleapis": "^105.0.0",
     "iamcal": "^2.0.0",
     "pako": "^2.1.0",

@@ -1,11 +1,13 @@
 import type { CalendarEntry } from "@shared"
 import { OAuth2Client } from "google-auth-library"
-import { calendar_v3, google } from "googleapis"
+import { calendar_v3, google, GoogleApis } from "googleapis"
 import { CalendarEvent, parseDate, Property } from "iamcal"
+import { authorizeBatchWithCalendar } from "./batch"
 
-export function authorizeGoogleCalendar(auth: OAuth2Client): calendar_v3.Calendar {
+export function authorizeGoogleCalendar(auth: OAuth2Client, googleApis?: GoogleApis): calendar_v3.Calendar {
+    const useGoogle = googleApis ?? google
     //@ts-ignore
-    return google.calendar({ version: 'v3', auth })
+    return useGoogle.calendar({ version: 'v3', auth })
 }
 
 export interface APICalendar {
@@ -103,15 +105,20 @@ function toGoogleEvent(event: CalendarEvent): calendar_v3.Schema$Event {
  * @param auth An authorized OAuth2 client.
  */
 export async function addEvents(auth: OAuth2Client, calendarId: string, events: CalendarEvent[]): Promise<void> {
-    const calendar = authorizeGoogleCalendar(auth)
+    return new Promise((resolve, reject) => {
+        const { batch, calendar } = authorizeBatchWithCalendar(auth)
 
-    const responses = await Promise.all(events.map(event => {
-        const requestBody = toGoogleEvent(event)
-        return calendar.events.insert({
-            calendarId,
-            requestBody,
+        batch.add(events.map(event => {
+            const requestBody = toGoogleEvent(event)
+            return calendar.events.insert({ calendarId, requestBody })
+        }))
+
+        batch.exec((error, result, errors) => {
+            if (error) {
+                reject(error)
+            } else {
+                resolve(result)
+            }
         })
-    }))
-
-    // TODO: Return result
+    })
 }
