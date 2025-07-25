@@ -2,7 +2,6 @@ import type { CalendarEntry } from "@shared"
 import { OAuth2Client } from "google-auth-library"
 import { calendar_v3, google, GoogleApis } from "googleapis"
 import { CalendarEvent, parseDate, Property } from "iamcal"
-import { authorizeBatchWithCalendar } from "./batch"
 
 export function authorizeGoogleCalendar(auth: OAuth2Client, googleApis?: GoogleApis): calendar_v3.Calendar {
     const useGoogle = googleApis ?? google
@@ -104,21 +103,17 @@ function toGoogleEvent(event: CalendarEvent): calendar_v3.Schema$Event {
  * @param calendarId The Google Calendar id
  * @param auth An authorized OAuth2 client.
  */
-export async function addEvents(auth: OAuth2Client, calendarId: string, events: CalendarEvent[]): Promise<void> {
+export async function addEvents(auth: OAuth2Client, calendarId: string, events: CalendarEvent[]): Promise<any> {
     return new Promise((resolve, reject) => {
-        const { batch, calendar } = authorizeBatchWithCalendar(auth)
+        const calendar = authorizeGoogleCalendar(auth)
 
-        batch.add(events.map(event => {
+        Promise.all(events.map(event => {
             const requestBody = toGoogleEvent(event)
             return calendar.events.insert({ calendarId, requestBody })
-        }))
-
-        batch.exec((error, result, errors) => {
-            if (error) {
-                reject(error)
-            } else {
-                resolve(result)
-            }
+        })).then(responses => {
+            resolve(responses)
+        }).catch(reason => {
+            reject(reason)
         })
     })
 }
