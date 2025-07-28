@@ -1,3 +1,4 @@
+import e from "express"
 import { calendar_v3 } from "googleapis"
 
 export interface CalendarEntry {
@@ -5,6 +6,12 @@ export interface CalendarEntry {
     summary: string
     backgroundColor: string
     foregroundColor: string
+}
+
+export interface ErrorResponse {
+    error: {
+        message: string
+    }
 }
 
 export interface CalendarsResponse {

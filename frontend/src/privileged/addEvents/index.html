@@ -6,11 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adding events to calendar</title>
+    <link rel="stylesheet" href="/style.css">
 </head>
 
 <body>
     <h2 id="title">Adding events to your calendar...</h2>
+
     <p id="output"></p>
+
+    <div id="failedEvents" style="display: none;">
+        <h3>Failed to add the following</h3>
+        <ul id="failedEventsList"></ul>
+    </div>
+
+    <div id="successfulEvents" style="display: none;">
+        <h3>Successfully added the following</h3>
+        <ul id="successfulEventsList"></ul>
+    </div>
 
     <script src="addEvents.js"></script>
 </body>

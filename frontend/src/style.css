@@ -62,3 +62,71 @@ body {
 .calendarButton .summary {
     margin-right: 0.5em;
 }
+
+#successfulEventsList,
+#failedEventsList {
+    padding-left: 0;
+    
+    display: flex;
+    flex-flow: column nowrap;
+}
+
+.addedEvent {
+    position: relative;
+
+    padding: 0 1em 0 2.75em;
+    background-color: var(--cardBackground);
+    border-radius: 2em;
+    margin: 0.5em;
+    box-shadow: 0px 2px 10px 0px #CCC;
+}
+
+.addedEvent summary {
+    cursor: pointer;
+    padding-bottom: 1.5em;
+}
+
+.addedEvent summary::-webkit-details-marker,
+.addedEvent summary::marker {
+    display: "none";
+    content: "";
+}
+
+.addedEvent summary:before {
+    content: "▶";
+    position: absolute;
+    top: 0.25em;
+    left: 0.25em;
+    margin: 1em;
+}
+
+.addedEvent[open] summary:before {
+    content: "▼";
+}
+
+.addedEvent summary > div {
+    display: inline-block;
+}
+
+.addedEvent summary h4 {
+    margin-bottom: 0.5em;
+}
+
+.eventTimes .start:after {
+    content: "–";
+    margin-inline: 0.25em;
+}
+
+.eventDetails {
+    margin-top: -0.5em;
+}
+
+.eventDetails .location:before {
+    content: "Location: ";
+    color: #777;
+    font-style: italic;
+}
+
+.eventDetails .description {
+    margin-bottom: 1.5em;
+}

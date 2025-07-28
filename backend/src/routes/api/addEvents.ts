@@ -3,6 +3,7 @@ import { recreateAuthenticatedClient } from '../../google/auth'
 import { addEvents } from '../../google/calendar'
 import { deserializeEvents } from '../../serialize'
 import { CustomSession, getSessionTokens } from '../../session'
+import { AddEventsResponse } from '@shared'
 
 export default async (req: Request, res: Response) => {
     res.setHeader('Accept', 'application/json')
@@ -44,8 +45,10 @@ export default async (req: Request, res: Response) => {
 
     const auth = await recreateAuthenticatedClient(getSessionTokens(req))
 
-    await addEvents(auth, calendarId, events).then(response => {
-        console.log(response)
+    await addEvents(auth, calendarId, events).then(addedEvents => {
+        const response: AddEventsResponse = {
+            events: addedEvents
+        }
         res.json(response)
     })
 }
