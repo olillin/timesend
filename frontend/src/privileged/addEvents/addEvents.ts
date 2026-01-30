@@ -8,64 +8,80 @@ const failedEventsList = document.getElementById('failedEventsList') as HTMLULis
 const url = new URL(document.location.href)
 const calendarId = url.searchParams.get('calendar')
 
+if (url.searchParams.has('added')) {
+    // Events already added
+    showAlreadyAdded()
+} else {
+    postEvents()
+    url.searchParams.append('added', '1')
+    window.history.replaceState(null, "", url.toString())
+}
+
+function showAlreadyAdded() {
+    title.innerText = 'Events already added'
+    output.innerText = 'This request has already been processed, no new events have been created.'
+}
+
 function isErrorResponse(response: any): response is import('@shared').ErrorResponse {
     return !!response['error']
 }
 
-fetch('/api/events', {
-    method: 'POST',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-        calendarId
-    }),
-}).then<import('@shared').ErrorResponse | import('@shared').AddEventsResponse>(response => {
-    if (!response.ok) {
-        title.innerText = 'Failed to add events to calendar'
-        output.innerText = 'Adding failed completely'
-        output.classList.add('error')
-        if (response.headers.get('Content-Type')?.includes('application/json')) {
-            return response.json() as Promise<import('@shared').ErrorResponse>
-        } else {
-            throw 'Adding failed completely'
+function postEvents() {
+    fetch('/api/events', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            calendarId
+        }),
+    }).then<import('@shared').ErrorResponse | import('@shared').AddEventsResponse>(response => {
+        if (!response.ok) {
+            title.innerText = 'Failed to add events to calendar'
+            output.innerText = 'Adding failed completely'
+            output.classList.add('error')
+            if (response.headers.get('Content-Type')?.includes('application/json')) {
+                return response.json() as Promise<import('@shared').ErrorResponse>
+            } else {
+                throw 'Adding failed completely'
+            }
         }
-    }
-    return response.json() as Promise<import('@shared').AddEventsResponse>
-}).then(response => {
-    if (isErrorResponse(response)) {
-        output.innerHTML += '<br>'
-        output.innerText += `Details: ${response.error.message}`
-        throw 'Adding failed completely, added details'
-    }
+        return response.json() as Promise<import('@shared').AddEventsResponse>
+    }).then(response => {
+        if (isErrorResponse(response)) {
+            output.innerHTML += '<br>'
+            output.innerText += `Details: ${response.error.message}`
+            throw 'Adding failed completely, added details'
+        }
 
-    const events = response.events
+        const events = response.events
 
-    const successfulEvents = events.filter(event => event.success)
-    const failedEvents = events.filter(event => !event.success)
+        const successfulEvents = events.filter(event => event.success)
+        const failedEvents = events.filter(event => !event.success)
 
-    title.innerText = 'Added events to calendar'
-    output.innerText = `Successfully added ${successfulEvents.length} events to calendar`
+        title.innerText = 'Added events to calendar'
+        output.innerText = `Successfully added ${successfulEvents.length} events to calendar`
 
-    successfulEventsDiv.style.display = ''
-    successfulEvents.forEach(addedEvent => {
-        const element = createAddedEventElement(addedEvent)
-        successfulEventsList.appendChild(element)
-    })
-
-    if (failedEvents.length > 0) {
-        failedEventsDiv.style.display = ''
-        output.innerHTML += `<br><span class="error">Failed to add ${failedEvents.length} events, see below</span>`
-
-        failedEvents.forEach(addedEvent => {
+        successfulEventsDiv.style.display = ''
+        successfulEvents.forEach(addedEvent => {
             const element = createAddedEventElement(addedEvent)
-            failedEventsList.appendChild(element)
+            successfulEventsList.appendChild(element)
         })
-    }
-}).catch(error => {
-    console.warn(error)
-})
+
+        if (failedEvents.length > 0) {
+            failedEventsDiv.style.display = ''
+            output.innerHTML += `<br><span class="error">Failed to add ${failedEvents.length} events, see below</span>`
+
+            failedEvents.forEach(addedEvent => {
+                const element = createAddedEventElement(addedEvent)
+                failedEventsList.appendChild(element)
+            })
+        }
+    }).catch(error => {
+        console.warn(error)
+    })
+}
 
 function createAddedEventElement(addedEvent: import('@shared').AddedEvent): HTMLElement {
     const container = document.createElement('details')
