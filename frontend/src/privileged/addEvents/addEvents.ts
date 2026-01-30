@@ -107,12 +107,18 @@ function createAddedEventElement(addedEvent: import('@shared').AddedEvent): HTML
         detailsBody.appendChild(location)
     }
 
-    const description = document.createElement('p')
-    description.classList.add('description')
-    description.innerText = addedEvent.description ?? ''
-    detailsBody.appendChild(description)
+    if (addedEvent.description) {
+        const description = document.createElement('p')
+        description.classList.add('description')
+        description.innerText = addedEvent.description
 
-    container.appendChild(detailsBody)
+        detailsBody.appendChild(description)
+    }
+
+    if (detailsBody.children.length !== 0) {
+        container.appendChild(detailsBody)
+        container.classList.add('hasDetails')
+    }
 
     return container
 }

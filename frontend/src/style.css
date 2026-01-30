@@ -82,26 +82,7 @@ body {
 }
 
 .addedEvent summary {
-    cursor: pointer;
     padding-bottom: 1.5em;
-}
-
-.addedEvent summary::-webkit-details-marker,
-.addedEvent summary::marker {
-    display: "none";
-    content: "";
-}
-
-.addedEvent summary:before {
-    content: "▶";
-    position: absolute;
-    top: 0.25em;
-    left: 0.25em;
-    margin: 1em;
-}
-
-.addedEvent[open] summary:before {
-    content: "▼";
 }
 
 .addedEvent summary > div {
@@ -111,6 +92,30 @@ body {
 .addedEvent summary h4 {
     margin-bottom: 0.5em;
 }
+
+
+.addedEvent summary::-webkit-details-marker,
+.addedEvent summary::marker {
+    display: "none";
+    content: "";
+}
+
+.hasDetails summary {
+    cursor: pointer;
+}
+
+.hasDetails summary:before {
+    content: "▶";
+    position: absolute;
+    top: 0.25em;
+    left: 0.25em;
+    margin: 1em;
+}
+
+.hasDetails[open] summary:before {
+    content: "▼";
+}
+
 
 .eventTimes .start:after {
     content: "–";
