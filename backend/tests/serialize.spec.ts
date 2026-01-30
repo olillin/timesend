@@ -74,6 +74,11 @@ const exampleEvents2 = [
 ]
 
 describe('serialize and deserialize', () => {
+    /** Remove all ignored properties from calendar body. */
+    function ignoreProperties(calendarBody: string): string {
+        return calendarBody.replace(/^(UID|DTSTAMP):.+?$/gm, '')
+    }
+
     function testEvents(events: CalendarEvent[]) {
         const serialized = serializeEvents(events)
         const deserialized = deserializeEvents(serialized)
@@ -81,7 +86,7 @@ describe('serialize and deserialize', () => {
         const originalBody = events.map(e => e.serialize()).join('\n')
         const deserializedBody = deserialized.map(e => e.serialize()).join('\n')
 
-        expect(deserializedBody).toStrictEqual(originalBody)
+        expect(ignoreProperties(deserializedBody)).toStrictEqual(ignoreProperties(originalBody))
     }
 
     it('deserializes to the same value with example 1', () => testEvents(exampleEvents1))

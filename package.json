@@ -12,7 +12,7 @@
     "copyBackend": "node -e \"require('fs').cpSync('./backend/dist', './dist', {recursive: true});\"",
     "copyFrontend": "node -e \"require('fs').cpSync('./frontend/dist', './dist/public', {recursive: true});\"",
     "start": "cd dist && node $([[ -f ../.env ]] && echo \"--env-file ../.env \")app.js ",
-    "test": "cd backend && jest"
+    "test": "cd backend && npx jest"
   },
   "repository": {
     "type": "git",
