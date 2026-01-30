@@ -42,7 +42,11 @@ export default async (req: Request, res: Response) => {
         return
     }
 
-    const url = `${req.protocol}://${req.headers.host ?? req.hostname}/p/selectCalendar?events=${serialized}`
+    const hostname = req.headers.host ?? req.hostname
+    // Always use HTTPS for requests to domain names
+    const protocol = /^(localhost|\d+\.\d+\.\d+\.\d+)/.test(hostname) ? req.protocol : 'https'
+    const url = `${protocol}://${hostname}/p/selectCalendar?events=${serialized}`
+
     const responseBody: UploadResponse = { url }
     res.setHeader('Location', url).json(responseBody)
 
