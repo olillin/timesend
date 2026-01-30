@@ -1,11 +1,18 @@
 import { NextFunction, Request, Response } from "express"
-import { CustomSession, getSessionTokens } from "../session"
-import { createClient, generateAuthUrl } from "../google/auth"
+import { getSessionTokens } from "../session"
+import { createClient, generateAuthUrl, recreateAuthenticatedClient } from "../google/auth"
 
 export default async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Check if authorized by attempting to get session tokens
-        getSessionTokens(req)
+        const credentials = getSessionTokens(req)
+        console.log(credentials)
+        if (typeof credentials.expiry_date === 'number') {
+            const now = new Date()
+            if (credentials.expiry_date <= now.getTime()) {
+                throw new Error("Token expired")
+            }
+        }
 
         next()
     } catch (err) {
