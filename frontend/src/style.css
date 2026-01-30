@@ -21,9 +21,11 @@ body {
 .calendarButton {
     border-radius: 2em;
     cursor: pointer;
+    text-decoration: none;
 }
 
 .calendarCard {
+    color: black;
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
@@ -41,12 +43,24 @@ body {
     z-index: 10;
 }
 
-.calendarButton:hover .calendarCard {
-    transition-duration: 0s;
-    transform: scale(110%) rotateZ(1deg);
-    
+.calendarButton:hover .calendarCard,
+.calendarButton:focus .calendarCard {
     color: var(--calendarForeground);
     background-color: var(--calendarBackground);
+    transition-duration: 0.1s;
+}
+
+.calendarButton:focus {
+    outline: none;
+}
+.calendarButton:focus .calendarCard {
+    box-shadow: 0 0 0 0.15em var(--cardBackground), 0 0 0 0.3em var(--calendarBackground);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .calendarButton:hover .calendarCard {
+        transform: translateX(-1em);    
+    }
 }
 
 .calendarButton .coloredDot {
@@ -61,6 +75,7 @@ body {
 
 .calendarButton .summary {
     margin-right: 0.5em;
+    /*! text-decoration: none; */
 }
 
 #successfulEventsList,
