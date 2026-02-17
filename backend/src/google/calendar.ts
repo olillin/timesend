@@ -1,7 +1,7 @@
 import type { AddedEvent, CalendarEntry } from "@shared"
 import { OAuth2Client } from "google-auth-library"
 import { calendar_v3, google, GoogleApis } from "googleapis"
-import { CalendarEvent, parseDate, Property } from "iamcal"
+import { CalendarDateOrTime, CalendarEvent } from "iamcal"
 
 export function authorizeGoogleCalendar(auth: OAuth2Client, googleApis?: GoogleApis): calendar_v3.Calendar {
     const useGoogle = googleApis ?? google
@@ -68,32 +68,27 @@ export function padZeros(num: number, maxLength: number): string {
     return num.toString().padStart(maxLength, '0')
 }
 
-export function toGoogleDate(dateProperty: Property): calendar_v3.Schema$EventDateTime {
-    const date = parseDate(dateProperty)
-    if (dateProperty.params.includes('VALUE=DATE')) {
+export function toGoogleDate(date: CalendarDateOrTime): calendar_v3.Schema$EventDateTime {
+    if (!date.isFullDay()) {
         return {
-            date: padZeros(date.getFullYear(), 4) + '-'
-                + padZeros(date.getMonth() + 1, 2) + '-'
-                + padZeros(date.getDate(), 2)
+            dateTime: date.getDate().toISOString()
         }
-    } else {
-        return {
-            dateTime: date.toISOString()
-        }
+    }
+
+    return {
+        date: padZeros(date.getDate().getFullYear(), 4) + '-'
+            + padZeros(date.getDate().getMonth() + 1, 2) + '-'
+            + padZeros(date.getDate().getDate(), 2)
     }
 }
 
 function toGoogleEvent(event: CalendarEvent): calendar_v3.Schema$Event {
-    if (!event.getProperty('DTEND')) {
-        throw new Error('Event is missing DTEND which is required')
-    }
-
     return {
-        start: toGoogleDate(event.getProperty('DTSTART')!),
-        end: toGoogleDate(event.getProperty('DTEND')!),
-        summary: event.getProperty('SUMMARY')?.value,
-        description: event.getProperty('DESCRIPTION')?.value,
-        location: event.location(),
+        start: toGoogleDate(event.getStart()),
+        end: toGoogleDate(event.getEnd()),
+        summary: event.getSummary(),
+        description: event.getDescription(),
+        location: event.getLocation(),
     }
 }
 

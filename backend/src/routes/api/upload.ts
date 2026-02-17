@@ -19,7 +19,7 @@ export default async (req: Request, res: Response) => {
     const requestBody = req.body as string
     let calendar: Calendar
     try {
-        calendar = await parseCalendar(requestBody).catch(() => { throw 1 })
+        calendar = parseCalendar(requestBody)
     } catch {
         res.status(400).json({
             error: {
@@ -29,7 +29,7 @@ export default async (req: Request, res: Response) => {
         return
     }
 
-    const events = calendar.events()
+    const events = calendar.getEvents()
     let serialized: string
     try {
         serialized = serializeEvents(events)
