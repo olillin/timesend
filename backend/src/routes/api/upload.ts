@@ -49,6 +49,4 @@ export default async (req: Request, res: Response) => {
 
     const responseBody: UploadResponse = { url }
     res.setHeader('Location', url).json(responseBody)
-
-    console.log(`Successfully created new url: ${url}`)
 }

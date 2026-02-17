@@ -40,8 +40,6 @@ export default async (req: Request, res: Response) => {
     }
 
     const events = deserializeEvents(currentEvents)
-    console.log(`Adding events:`)
-    console.log(events)
 
     const auth = await recreateAuthenticatedClient(getSessionTokens(req))
 

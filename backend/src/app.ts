@@ -21,8 +21,6 @@ app.use(cookieSession({
     maxAge: ONE_DAY,
 }))
 
-app.use(middleware.debug)
-
 app.use(bodyParser.json())
 export const CALENDAR_MIME_TYPE = 'text/calendar'
 app.use(bodyParser.text({ type: CALENDAR_MIME_TYPE }))

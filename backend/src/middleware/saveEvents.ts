@@ -16,7 +16,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     const search = new URLSearchParams(searchString)
     search.delete('events')
     const url = req.url.replace(/\?.*/, search.size ? `?${search}` : '')
-    console.log(`New url: ${url}`)
 
     res.redirect(url)
 }

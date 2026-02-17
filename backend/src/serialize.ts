@@ -75,9 +75,7 @@ function expandEvent(body: string): CalendarEvent {
         props.push(prop)
     })
 
-    const event = new CalendarEvent(new Component('VEVENT', props))
-    console.log(event)
-    return event
+    return new CalendarEvent(new Component('VEVENT', props))
 }
 
 /**

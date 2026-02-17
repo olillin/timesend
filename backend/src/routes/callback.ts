@@ -22,12 +22,9 @@ export default async (req: Request, res: Response) => {
 
     setSessionTokens(req, tokens)
 
-    console.info('Client authenticated.')
-
     let redirectTo = '/p/selectCalendar'
     if (!qs.has('state')) {
         redirectTo = qs.get('state')!
-        console.log(`Returning to ${redirectTo}`)
     }
     res.redirect(redirectTo)
 }
