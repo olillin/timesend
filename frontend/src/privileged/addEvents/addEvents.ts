@@ -179,9 +179,19 @@ function createEventTimesElement(start: import('@shared').AddedEvent['start'], e
     return container
 }
 
+function padZeros(text: string | number, length: number): string {
+    return String(text).padStart(length, "0")
+}
+
 function formatTime(time: Date, includeYear: boolean, includeTime: boolean): string {
-    const dateString = `${time.getDate()}/${time.getMonth() + 1}`
-    const yearString = includeYear ? ` ${time.getFullYear()}` : ''
-    const timeString = includeTime ? ` ${time.getHours()}:${time.getMinutes()}` : ''
+    const year = padZeros(time.getFullYear(), 4)
+    const month = padZeros(time.getMonth() + 1, 2)
+    const day = padZeros(time.getDate(), 2)
+    const hours = padZeros(time.getHours(), 2)
+    const minutes = padZeros(time.getMinutes(), 2)
+
+    const dateString = `${day}/${month}`
+    const yearString = includeYear ? ` ${year}` : ''
+    const timeString = includeTime ? ` ${hours}:${minutes}` : ''
     return dateString + yearString + timeString
 }

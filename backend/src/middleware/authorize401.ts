@@ -8,7 +8,6 @@ export default async (req: Request, res: Response, next: NextFunction) => {
 
         next()
     } catch (err) {
-        console.log(`User is unauthorized (${err})`)
         res.status(401).json({
             error: {
                 message: 'Unauthorized'

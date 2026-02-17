@@ -19,6 +19,9 @@ const dateProperties = new Set<string>([
     'DTEND',
 ])
 
+const shortEventSeparator = '\x1E'
+const shortEventPropertySeparator = '\x1F'
+
 /**
  * Convert an event to a shorter representation than normal by taking some liberties.
  * 
@@ -34,7 +37,7 @@ function shortenEvent(event: CalendarEvent): string {
         if (!shortName) return null
 
         let value = prop.value
-        return `${shortName}:${value}`
+        return `${shortName}${shortEventPropertySeparator}${value}`
     }).filter(prop => prop !== null)
 
     const body = lines.join('\n')
@@ -47,46 +50,33 @@ function shortenEvent(event: CalendarEvent): string {
  */
 function expandEvent(body: string): CalendarEvent {
     const props: Property[] = [
-        {
-            name: 'UID',
-            params: [],
-            value: crypto.randomUUID(),
-        },
-        {
-            name: 'DTSTAMP',
-            params: [],
-            value: toDateTimeString(new Date()),
-        }
+        new Property('UID', crypto.randomUUID()),
+        new Property('DTSTAMP', toDateTimeString(new Date())),
     ]
 
     body.split('\n').forEach(line => {
-        const index = line.indexOf(':')
+        const index = line.indexOf(shortEventPropertySeparator)
         const shortName = line.slice(0, index)
         const value = line.slice(index + 1)
 
         const name = propertyNameMap[shortName]
-
-        const params: string[] = []
-        // Infer if a date is of type DATE and not the default DATETIME
-        if (dateProperties.has(name)) {
-            if (!value.includes('T')) {
-                params.push('VALUE=DATE')
-            }
+        if (name === undefined) {
+            // Add to previous property
+            const lastPropIndex = props.length - 1
+            const lastProp: Property = props[lastPropIndex]
+            lastProp.setValue(lastProp.getValue() + "\n" + line)
+            return
         }
+        // Infer date type from format
+        const isDate = dateProperties.has(name) && !value.includes('T')
+        let params = isDate ? {VALUE: 'DATE'} : undefined
 
-        const prop: Property = {
-            name,
-            params,
-            value,
-        }
-
+        const prop = new Property(name, value, params)
         props.push(prop)
     })
 
     return new CalendarEvent(new Component('VEVENT', props))
 }
-
-const shortEventSeparator = '\x1E'
 
 /**
  * Serialize a list of calendar events into a URL-safe string
