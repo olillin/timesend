@@ -1,5 +1,9 @@
 import fs from 'fs/promises'
-import { Credentials, OAuth2Client, OAuth2ClientOptions } from 'google-auth-library'
+import {
+    Credentials,
+    OAuth2Client,
+    OAuth2ClientOptions,
+} from 'google-auth-library'
 import path from 'path'
 import process from 'process'
 
@@ -46,7 +50,9 @@ async function loadCredentials(): Promise<OAuth2ClientOptions | null> {
 export async function createClient(): Promise<OAuth2Client> {
     let clientCredentials = await loadCredentials()
     if (!clientCredentials) {
-        throw Error(`Unable to authorize, ${CREDENTIALS_PATH} does not exist. Download it from Google Cloud Platform`)
+        throw Error(
+            `Unable to authorize, ${CREDENTIALS_PATH} does not exist. Download it from Google Cloud Platform`
+        )
     }
 
     return new OAuth2Client(clientCredentials)
@@ -56,7 +62,9 @@ export async function createClient(): Promise<OAuth2Client> {
  * Create a OAuth2 client which has been authorized with the OAuth2 flow.
  * @param credentials the tokens previously created by the client.
  */
-export async function recreateAuthenticatedClient(credentials: Credentials): Promise<OAuth2Client> {
+export async function recreateAuthenticatedClient(
+    credentials: Credentials
+): Promise<OAuth2Client> {
     const client = await createClient()
     client.setCredentials(credentials)
     return client

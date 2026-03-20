@@ -1,10 +1,10 @@
-import { Router } from "express"
-import * as routes from "../routes"
-import api from "./api"
+import { Router } from 'express'
+import * as routes from '~/routes/index.js'
+import api from './api.js'
 
 const root = Router()
-export default root
 
 root.use('/api', api)
-
 root.get('/callback', routes.callback)
+
+export default root

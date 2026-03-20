@@ -1,13 +1,18 @@
+import type { CalendarsResponse } from '@common'
+
 const calendarList = document.getElementById('calendarList') as HTMLDivElement
 
 fetch('/api/calendars')
-    .then(res => new Promise<import('@shared').CalendarsResponse>((resolve, reject) => {
-        if (res) {
-            resolve(res.json())
-        } else {
-            reject()
-        }
-    }))
+    .then(
+        res =>
+            new Promise<CalendarsResponse>((resolve, reject) => {
+                if (res) {
+                    resolve(res.json())
+                } else {
+                    reject()
+                }
+            })
+    )
     .then(calendars => updateCalendarList(calendars))
     .catch(reason => {
         console.error(`Failed to get calendars: ${reason}`)
@@ -19,7 +24,7 @@ fetch('/api/calendars')
         calendarList.appendChild(error)
     })
 
-function updateCalendarList(response: import('@shared').CalendarsResponse) {
+function updateCalendarList(response: CalendarsResponse) {
     const calendars = response.calendars
 
     calendars.forEach(calendar => {

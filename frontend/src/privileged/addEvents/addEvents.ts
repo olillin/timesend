@@ -1,9 +1,19 @@
+import type { ErrorResponse, AddEventsResponse, AddedEvent } from '@common'
+
 const title = document.getElementById('title') as HTMLHeadingElement
 const output = document.getElementById('output') as HTMLParagraphElement
-const successfulEventsDiv = document.getElementById('successfulEvents') as HTMLDivElement
-const successfulEventsList = document.getElementById('successfulEventsList') as HTMLUListElement
-const failedEventsDiv = document.getElementById('failedEvents') as HTMLDivElement
-const failedEventsList = document.getElementById('failedEventsList') as HTMLUListElement
+const successfulEventsDiv = document.getElementById(
+    'successfulEvents'
+) as HTMLDivElement
+const successfulEventsList = document.getElementById(
+    'successfulEventsList'
+) as HTMLUListElement
+const failedEventsDiv = document.getElementById(
+    'failedEvents'
+) as HTMLDivElement
+const failedEventsList = document.getElementById(
+    'failedEventsList'
+) as HTMLUListElement
 
 const url = new URL(document.location.href)
 const calendarId = url.searchParams.get('calendar')
@@ -14,15 +24,16 @@ if (url.searchParams.has('added')) {
 } else {
     postEvents()
     url.searchParams.append('added', '1')
-    window.history.replaceState(null, "", url.toString())
+    window.history.replaceState(null, '', url.toString())
 }
 
 function showAlreadyAdded() {
     title.innerText = 'Events already added'
-    output.innerText = 'This request has already been processed, no new events have been created.'
+    output.innerText =
+        'This request has already been processed, no new events have been created.'
 }
 
-function isErrorResponse(response: any): response is import('@shared').ErrorResponse {
+function isErrorResponse(response: any): response is ErrorResponse {
     return !!response['error']
 }
 
@@ -30,60 +41,67 @@ function postEvents() {
     fetch('/api/events', {
         method: 'POST',
         headers: {
-            'Accept': 'application/json',
+            Accept: 'application/json',
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            calendarId
+            calendarId,
         }),
-    }).then<import('@shared').ErrorResponse | import('@shared').AddEventsResponse>(response => {
-        if (!response.ok) {
-            title.innerText = 'Failed to add events to calendar'
-            output.innerText = 'Adding failed completely'
-            output.classList.add('error')
-            if (response.headers.get('Content-Type')?.includes('application/json')) {
-                return response.json() as Promise<import('@shared').ErrorResponse>
-            } else {
-                throw 'Adding failed completely'
-            }
-        }
-        return response.json() as Promise<import('@shared').AddEventsResponse>
-    }).then(response => {
-        if (isErrorResponse(response)) {
-            output.innerHTML += '<br>'
-            output.innerText += `Details: ${response.error.message}`
-            throw 'Adding failed completely, added details'
-        }
-
-        const events = response.events
-
-        const successfulEvents = events.filter(event => event.success)
-        const failedEvents = events.filter(event => !event.success)
-
-        title.innerText = 'Added events to calendar'
-        output.innerText = `Successfully added ${successfulEvents.length} events to calendar`
-
-        successfulEventsDiv.style.display = ''
-        successfulEvents.forEach(addedEvent => {
-            const element = createAddedEventElement(addedEvent)
-            successfulEventsList.appendChild(element)
-        })
-
-        if (failedEvents.length > 0) {
-            failedEventsDiv.style.display = ''
-            output.innerHTML += `<br><span class="error">Failed to add ${failedEvents.length} events, see below</span>`
-
-            failedEvents.forEach(addedEvent => {
-                const element = createAddedEventElement(addedEvent)
-                failedEventsList.appendChild(element)
-            })
-        }
-    }).catch(error => {
-        console.warn(error)
     })
+        .then<ErrorResponse | AddEventsResponse>(response => {
+            if (!response.ok) {
+                title.innerText = 'Failed to add events to calendar'
+                output.innerText = 'Adding failed completely'
+                output.classList.add('error')
+                if (
+                    response.headers
+                        .get('Content-Type')
+                        ?.includes('application/json')
+                ) {
+                    return response.json() as Promise<ErrorResponse>
+                } else {
+                    throw 'Adding failed completely'
+                }
+            }
+            return response.json() as Promise<AddEventsResponse>
+        })
+        .then(response => {
+            if (isErrorResponse(response)) {
+                output.innerHTML += '<br>'
+                output.innerText += `Details: ${response.error.message}`
+                throw 'Adding failed completely, added details'
+            }
+
+            const events = response.events
+
+            const successfulEvents = events.filter(event => event.success)
+            const failedEvents = events.filter(event => !event.success)
+
+            title.innerText = 'Added events to calendar'
+            output.innerText = `Successfully added ${successfulEvents.length} events to calendar`
+
+            successfulEventsDiv.style.display = ''
+            successfulEvents.forEach(addedEvent => {
+                const element = createAddedEventElement(addedEvent)
+                successfulEventsList.appendChild(element)
+            })
+
+            if (failedEvents.length > 0) {
+                failedEventsDiv.style.display = ''
+                output.innerHTML += `<br><span class="error">Failed to add ${failedEvents.length} events, see below</span>`
+
+                failedEvents.forEach(addedEvent => {
+                    const element = createAddedEventElement(addedEvent)
+                    failedEventsList.appendChild(element)
+                })
+            }
+        })
+        .catch(error => {
+            console.warn(error)
+        })
 }
 
-function createAddedEventElement(addedEvent: import('@shared').AddedEvent): HTMLElement {
+function createAddedEventElement(addedEvent: AddedEvent): HTMLElement {
     const container = document.createElement('details')
     container.classList.add('addedEvent')
 
@@ -139,7 +157,10 @@ function createAddedEventElement(addedEvent: import('@shared').AddedEvent): HTML
     return container
 }
 
-function createEventTimesElement(start: import('@shared').AddedEvent['start'], end: import('@shared').AddedEvent['end']): HTMLElement {
+function createEventTimesElement(
+    start: AddedEvent['start'],
+    end: AddedEvent['end']
+): HTMLElement {
     // Parse times
     const startTimeString = start.dateTime ?? start.date ?? null
     if (startTimeString === null) throw new Error('Start has no value')
@@ -155,7 +176,9 @@ function createEventTimesElement(start: import('@shared').AddedEvent['start'], e
         endTime = new Date(endTime.getTime() - ONE_DAY_MS)
     }
     const now = new Date()
-    const includeYear = startTime.getFullYear() !== now.getFullYear() || endTime.getFullYear() !== now.getFullYear()
+    const includeYear =
+        startTime.getFullYear() !== now.getFullYear() ||
+        endTime.getFullYear() !== now.getFullYear()
 
     const prettyStartTime = formatTime(startTime, includeYear, hasTime)
     const prettyEndTime = formatTime(endTime, includeYear, hasTime)
@@ -180,10 +203,14 @@ function createEventTimesElement(start: import('@shared').AddedEvent['start'], e
 }
 
 function padZeros(text: string | number, length: number): string {
-    return String(text).padStart(length, "0")
+    return String(text).padStart(length, '0')
 }
 
-function formatTime(time: Date, includeYear: boolean, includeTime: boolean): string {
+function formatTime(
+    time: Date,
+    includeYear: boolean,
+    includeTime: boolean
+): string {
     const year = padZeros(time.getFullYear(), 4)
     const month = padZeros(time.getMonth() + 1, 2)
     const day = padZeros(time.getDate(), 2)

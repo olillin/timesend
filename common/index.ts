@@ -1,5 +1,5 @@
-import e from "express"
-import { calendar_v3 } from "googleapis"
+import e from 'express'
+import { calendar_v3 } from 'googleapis'
 
 export interface CalendarEntry {
     id: string

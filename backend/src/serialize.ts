@@ -1,44 +1,43 @@
-import { CalendarEvent, Component, Property, toDateTimeString } from "iamcal"
+import { CalendarEvent, Component, Property, toDateTimeString } from 'iamcal'
 import pako from 'pako'
 
 const propertyShortNameMap: { [_: string]: string } = {
-    'DTSTART': 's',
-    'DTEND': 'e',
-    'SUMMARY': 'm',
-    'DESCRIPTION': 'd',
-    'LOCATION': 'l',
+    DTSTART: 's',
+    DTEND: 'e',
+    SUMMARY: 'm',
+    DESCRIPTION: 'd',
+    LOCATION: 'l',
 } as const
 
 const propertyNameMap = Object.fromEntries(
     Object.entries(propertyShortNameMap).map(([a, b]) => [b, a])
 )
 
-const dateProperties = new Set<string>([
-    'DTSTAMP',
-    'DTSTART',
-    'DTEND',
-])
+const dateProperties = new Set<string>(['DTSTAMP', 'DTSTART', 'DTEND'])
 
 const shortEventSeparator = '\x1E'
 const shortEventPropertySeparator = '\x1F'
 
 /**
  * Convert an event to a shorter representation than normal by taking some liberties.
- * 
- * Namely: 
+ *
+ * Namely:
  * - Only the properties in {@link propertyShortNameMap} are preserved.
  * - BEGIN and END lines of the VEVENT block are omitted
  *
  * @see {@link expandEvent}
  */
 function shortenEvent(event: CalendarEvent): string {
-    const lines = event.properties.map(prop => {
-        const shortName: string | undefined = propertyShortNameMap[prop.name]
-        if (!shortName) return null
+    const lines = event.properties
+        .map(prop => {
+            const shortName: string | undefined =
+                propertyShortNameMap[prop.name]
+            if (!shortName) return null
 
-        let value = prop.value
-        return `${shortName}${shortEventPropertySeparator}${value}`
-    }).filter(prop => prop !== null)
+            let value = prop.value
+            return `${shortName}${shortEventPropertySeparator}${value}`
+        })
+        .filter(prop => prop !== null)
 
     const body = lines.join('\n')
     return body
@@ -64,12 +63,12 @@ function expandEvent(body: string): CalendarEvent {
             // Add to previous property
             const lastPropIndex = props.length - 1
             const lastProp: Property = props[lastPropIndex]
-            lastProp.setValue(lastProp.getValue() + "\n" + line)
+            lastProp.setValue(lastProp.getValue() + '\n' + line)
             return
         }
         // Infer date type from format
         const isDate = dateProperties.has(name) && !value.includes('T')
-        let params = isDate ? {VALUE: 'DATE'} : undefined
+        let params = isDate ? { VALUE: 'DATE' } : undefined
 
         const prop = new Property(name, value, params)
         props.push(prop)

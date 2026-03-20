@@ -1,21 +1,22 @@
 import { Request, Response } from 'express'
-import { recreateAuthenticatedClient } from '../../google/auth'
-import { addEvents } from '../../google/calendar'
-import { deserializeEvents } from '../../serialize'
-import { CustomSession, getSessionTokens } from '../../session'
-import { AddEventsResponse } from '@shared'
+import { recreateAuthenticatedClient } from '~/google/auth.js'
+import { addEvents } from '~/google/calendar.js'
+import { deserializeEvents } from '~/serialize.js'
+import { CustomSession, getSessionTokens } from '~/session.js'
+import { AddEventsResponse } from '@common'
 
 export default async (req: Request, res: Response) => {
     res.setHeader('Accept', 'application/json')
 
     const session = req.session as CustomSession
-    const currentEvents: string | undefined = req.body['events'] ?? session.currentEvents
+    const currentEvents: string | undefined =
+        req.body['events'] ?? session.currentEvents
 
     if (!currentEvents) {
         res.status(400).json({
             error: {
-                message: 'No events provided'
-            }
+                message: 'No events provided',
+            },
         })
         return
     }
@@ -23,8 +24,8 @@ export default async (req: Request, res: Response) => {
     if (!typeof currentEvents) {
         res.status(400).json({
             error: {
-                message: 'Events must be provided as serialized string'
-            }
+                message: 'Events must be provided as serialized string',
+            },
         })
         return
     }
@@ -33,8 +34,8 @@ export default async (req: Request, res: Response) => {
     if (!calendarId) {
         res.status(400).json({
             error: {
-                message: 'calendarId must be provided in body'
-            }
+                message: 'calendarId must be provided in body',
+            },
         })
         return
     }
@@ -45,7 +46,7 @@ export default async (req: Request, res: Response) => {
 
     await addEvents(auth, calendarId, events).then(addedEvents => {
         const response: AddEventsResponse = {
-            events: addedEvents
+            events: addedEvents,
         }
         res.json(response)
     })

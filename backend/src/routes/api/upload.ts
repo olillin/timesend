@@ -1,17 +1,17 @@
-import { UploadResponse } from "@shared"
-import { Request, Response } from "express"
-import { Calendar, parseCalendar } from "iamcal"
-import { serializeEvents } from "../../serialize"
-import { CALENDAR_MIME_TYPE } from "../../app"
+import { UploadResponse } from '@common'
+import { Request, Response } from 'express'
+import { Calendar, parseCalendar } from 'iamcal'
+import { serializeEvents } from '~/serialize.js'
+import { CALENDAR_MIME_TYPE } from '~/environment.js'
 
 export default async (req: Request, res: Response) => {
     res.setHeader('Accept', CALENDAR_MIME_TYPE)
 
-    if (req.headers["content-type"] !== CALENDAR_MIME_TYPE) {
+    if (req.headers['content-type'] !== CALENDAR_MIME_TYPE) {
         res.status(400).json({
             error: {
-                message: "Content-Type must be 'text/calendar'"
-            }
+                message: "Content-Type must be 'text/calendar'",
+            },
         })
         return
     }
@@ -23,8 +23,8 @@ export default async (req: Request, res: Response) => {
     } catch {
         res.status(400).json({
             error: {
-                message: 'Calendar is invalid'
-            }
+                message: 'Calendar is invalid',
+            },
         })
         return
     }
@@ -44,7 +44,9 @@ export default async (req: Request, res: Response) => {
 
     const hostname = req.headers.host ?? req.hostname
     // Always use HTTPS for requests to domain names
-    const protocol = /^(localhost|\d+\.\d+\.\d+\.\d+)/.test(hostname) ? req.protocol : 'https'
+    const protocol = /^(localhost|\d+\.\d+\.\d+\.\d+)/.test(hostname)
+        ? req.protocol
+        : 'https'
     const url = `${protocol}://${hostname}/p/selectCalendar?events=${serialized}`
 
     const responseBody: UploadResponse = { url }

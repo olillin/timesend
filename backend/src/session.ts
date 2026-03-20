@@ -1,10 +1,10 @@
 import { Request } from 'express'
 import { Credentials, OAuth2Client } from 'google-auth-library'
-import { recreateAuthenticatedClient } from './google/auth'
+import { recreateAuthenticatedClient } from '~/google/auth.js'
 
 export interface CustomSession {
-    tokens: Credentials,
-    currentEvents: string,
+    tokens: Credentials
+    currentEvents: string
 }
 
 export function setSessionTokens(req: Request, tokens: Credentials): void {
@@ -20,6 +20,8 @@ export function getSessionTokens(req: Request): Credentials {
     return session.tokens
 }
 
-export async function createClientFromSession(req: Request): Promise<OAuth2Client> {
+export async function createClientFromSession(
+    req: Request
+): Promise<OAuth2Client> {
     return recreateAuthenticatedClient(await getSessionTokens(req))
 }
