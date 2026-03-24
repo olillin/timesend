@@ -5,7 +5,7 @@
 FROM node:24-alpine AS base
 
 # Set working directory for all build stages.
-WORKDIR /usr/src/app
+WORKDIR /app
 
 # Install pnpm
 RUN yarn global add pnpm
@@ -49,18 +49,15 @@ FROM base AS final
 ENV NODE_ENV=production
 
 # Run the application as a non-root user.
-RUN chown -R node:node /usr/src/app
+RUN chown -R node:node /app
 USER node
-
-# Copy package.json so that package manager commands can be used.
-COPY package.json pnpm-lock.yaml .
 
 # Copy the production dependencies from the deps stage and also
 # the built application from the build stage into the image.
-COPY --from=build /usr/src/app/bundle ./bundle
+COPY --from=build /app/bundle /app
 
 # Expose the port that the application listens on.
 EXPOSE 8080
 
 # Run the application.
-CMD ["pnpm", "start"]
+CMD ["node", "app.js"]

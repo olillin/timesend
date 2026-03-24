@@ -10,7 +10,7 @@ import rootRouter from '~/router/root.js'
 import bodyParser from 'body-parser'
 
 // Paths
-const PUBLIC_DIRECTORY = 'public'
+const PUBLIC_DIRECTORY = path.join(import.meta.dirname, 'public')
 
 // Setup express app
 const app = express()

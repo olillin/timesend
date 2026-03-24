@@ -11,7 +11,7 @@ const SCOPES = [
     'https://www.googleapis.com/auth/calendar.events.owned',
     'https://www.googleapis.com/auth/calendar.calendarlist.readonly',
 ]
-const CREDENTIALS_PATH = path.join(process.cwd(), '../credentials.json')
+const CREDENTIALS_PATH = path.join(process.cwd(), 'credentials.json')
 
 /**
  * Represents the downloaded credentials when creating a new OAuth2 client in
