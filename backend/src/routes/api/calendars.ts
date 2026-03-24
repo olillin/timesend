@@ -1,7 +1,7 @@
-import type { CalendarsResponse } from "@shared"
-import { Request, Response } from "express"
-import { listCalendars } from "../../google/calendar"
-import { createClientFromSession } from "../../session"
+import type { CalendarsResponse } from '@common'
+import { Request, Response } from 'express'
+import { listCalendars } from '~/google/calendar.js'
+import { createClientFromSession } from '~/session.js'
 
 export default async (req: Request, res: Response) => {
     const client = await createClientFromSession(req)
@@ -10,15 +10,14 @@ export default async (req: Request, res: Response) => {
         .then(calendars => {
             res.json({ calendars } as CalendarsResponse)
         })
-        .catch((reason) => {
+        .catch(reason => {
             console.error('Failed to get calendars')
             console.error(reason)
-            res.status(500)
-                .json({
-                    error: {
-                        message: 'Failed to get calendars',
-                        details: reason,
-                    }
-                })
+            res.status(500).json({
+                error: {
+                    message: 'Failed to get calendars',
+                    details: reason,
+                },
+            })
         })
 }

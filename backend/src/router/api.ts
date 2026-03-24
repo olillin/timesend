@@ -1,6 +1,6 @@
-import { Router } from "express"
-import * as middleware from "../middleware"
-import * as apiRoutes from "../routes/api"
+import { Router } from 'express'
+import * as middleware from '~/middleware/index.js'
+import * as apiRoutes from '~/routes/api/index.js'
 
 const api = Router()
 export default api

@@ -29,13 +29,13 @@ body {
     display: flex;
     flex-flow: row nowrap;
     align-items: center;
-    
+
     padding: 0.5em;
     background-color: var(--cardBackground);
     border-radius: 2em;
     margin: 0.5em;
-    box-shadow: 0px 2px 10px 0px #CCC;
-    
+    box-shadow: 0px 2px 10px 0px #ccc;
+
     transition-duration: 1s;
 }
 
@@ -54,12 +54,14 @@ body {
     outline: none;
 }
 .calendarButton:focus .calendarCard {
-    box-shadow: 0 0 0 0.15em var(--cardBackground), 0 0 0 0.3em var(--calendarBackground);
+    box-shadow:
+        0 0 0 0.15em var(--cardBackground),
+        0 0 0 0.3em var(--calendarBackground);
 }
 
 @media (prefers-reduced-motion: no-preference) {
     .calendarButton:hover .calendarCard {
-        transform: translateX(-1em);    
+        transform: translateX(-1em);
     }
 }
 
@@ -81,7 +83,7 @@ body {
 #successfulEventsList,
 #failedEventsList {
     padding-left: 0;
-    
+
     display: flex;
     flex-flow: column nowrap;
 }
@@ -93,7 +95,7 @@ body {
     background-color: var(--cardBackground);
     border-radius: 2em;
     margin: 0.5em;
-    box-shadow: 0px 2px 10px 0px #CCC;
+    box-shadow: 0px 2px 10px 0px #ccc;
 }
 
 .addedEvent summary {
@@ -108,11 +110,10 @@ body {
     margin-bottom: 0.5em;
 }
 
-
 .addedEvent summary::-webkit-details-marker,
 .addedEvent summary::marker {
-    display: "none";
-    content: "";
+    display: 'none';
+    content: '';
 }
 
 .hasDetails summary {
@@ -120,7 +121,7 @@ body {
 }
 
 .hasDetails summary:before {
-    content: "▶";
+    content: '▶';
     position: absolute;
     top: 0.25em;
     left: 0.25em;
@@ -128,12 +129,11 @@ body {
 }
 
 .hasDetails[open] summary:before {
-    content: "▼";
+    content: '▼';
 }
 
-
 .eventTimes .start:after {
-    content: "–";
+    content: '–';
     margin-inline: 0.25em;
 }
 
@@ -142,7 +142,7 @@ body {
 }
 
 .eventDetails .location:before {
-    content: "Location: ";
+    content: 'Location: ';
     color: #777;
     font-style: italic;
 }

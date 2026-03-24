@@ -1,5 +1,5 @@
-import { NextFunction, Request, Response } from "express"
-import { getSessionTokens } from "../session"
+import { NextFunction, Request, Response } from 'express'
+import { getSessionTokens } from '~/session.js'
 
 export default async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -10,8 +10,8 @@ export default async (req: Request, res: Response, next: NextFunction) => {
     } catch (err) {
         res.status(401).json({
             error: {
-                message: 'Unauthorized'
-            }
+                message: 'Unauthorized',
+            },
         })
     }
 }

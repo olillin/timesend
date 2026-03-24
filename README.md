@@ -9,10 +9,13 @@ Below is an example function in TypeScript which creates a TimeSend URL from a [
 ```typescript
 /**
  * Upload a calendar to TimeSend and get the URL.
- * 
+ *
  * @returns the URL returned from TimeSend.
  */
-export async function createUrl(calendar: Calendar, timeSendUrl: string = 'https://timesend.olillin.com'): Promise<string> {
+export async function createUrl(
+    calendar: Calendar,
+    timeSendUrl: string = 'https://timesend.olillin.com'
+): Promise<string> {
     const uploadPath = '/api/upload'
     const requestUrl = timeSendUrl + uploadPath
 
@@ -21,13 +24,15 @@ export async function createUrl(calendar: Calendar, timeSendUrl: string = 'https
     const response = await fetch(requestUrl, {
         method: 'POST',
         headers: {
-            'Content-Type': 'text/calendar'
+            'Content-Type': 'text/calendar',
         },
         body,
     })
 
     if (!response.ok) {
-        throw new Error(`Something went wrong when trying to POST to ${requestUrl}`)
+        throw new Error(
+            `Something went wrong when trying to POST to ${requestUrl}`
+        )
     }
 
     const responseBody = await response.json()
@@ -69,5 +74,5 @@ root of the project (in the same folder as the file `package.json`).
 Below are the available variables that can be configured:
 
 | Name | Description                            | Type | Required | Default |
-|------|----------------------------------------|------|----------|---------|
+| ---- | -------------------------------------- | ---- | -------- | ------- |
 | PORT | Which port the server should listen on | int  | no       | 8080    |

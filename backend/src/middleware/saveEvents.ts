@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { CustomSession } from 'src/session'
+import { CustomSession } from '~/session.js'
 
 export default async (req: Request, res: Response, next: NextFunction) => {
     if (!req.query['events']?.toString().trim()) {

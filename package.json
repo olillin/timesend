@@ -1,43 +1,50 @@
 {
-  "name": "timesend",
-  "version": "1.2.0",
-  "description": "Send calendar events through a link",
-  "main": "app.js",
-  "scripts": {
-    "clean": "rimraf --glob ./dist ./*/dist",
-    "build": "npm run clean && npm run buildBackend && npm run buildFrontend && npm run combine",
-    "buildBackend": "cd backend && tsc",
-    "buildFrontend": "cd frontend && tsc && node -e \"require('fs').cpSync('./src', './dist', {recursive: true});\" && rimraf --glob ./dist/**/*.ts",
-    "combine": "npm run copyBackend && npm run copyFrontend",
-    "copyBackend": "node -e \"require('fs').cpSync('./backend/dist', './dist', {recursive: true});\"",
-    "copyFrontend": "node -e \"require('fs').cpSync('./frontend/dist', './dist/public', {recursive: true});\"",
-    "start": "cd dist && node $([[ -f ../.env ]] && echo \"--env-file ../.env \")app.js ",
-    "test": "cd backend && npx jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/olillin/timesend.git"
-  },
-  "author": "olillin",
-  "license": "MIT",
-  "dependencies": {
-    "@types/cookie-session": "^2.0.49",
-    "body-parser": "^2.2.0",
-    "cookie-session": "^2.1.1",
-    "express": "^4.21.2",
-    "google-auth-library": "^10.1.0",
-    "googleapis": "^105.0.0",
-    "iamcal": "^4.0.0",
-    "pako": "^2.1.0",
-    "typescript": "^5.7.3"
-  },
-  "devDependencies": {
-    "@types/express": "^5.0.0",
-    "@types/jest": "^29.5.14",
-    "@types/node": "^22.13.1",
-    "@types/pako": "^2.0.3",
-    "jest": "^29.7.0",
-    "rimraf": "^6.0.1",
-    "ts-jest": "^29.2.5"
-  }
+    "name": "timesend",
+    "version": "1.3.0",
+    "description": "Send calendar events through a link",
+    "homepage": "https://timesend.olillin.com",
+    "private": true,
+    "type": "module",
+    "main": "bundle/app.js",
+    "scripts": {
+        "clean": "rimraf dist bundle",
+        "build": "pnpm clean && pnpm build:backend && pnpm build:frontend",
+        "build:backend": "tsc -p backend && rolldown -c backend/rolldown.config.mjs",
+        "build:frontend": "tsc -p frontend && node -e \"require('fs').cpSync('frontend/src', 'bundle/public', {recursive: true}); require('fs').cpSync('dist/frontend/src', 'bundle/public', {recursive: true});\" && rimraf --glob bundle/public/**/*.ts",
+        "start": "node .",
+        "test": "vitest -r backend",
+        "lint": "oxlint",
+        "fmt": "oxfmt",
+        "fmt:check": "oxfmt --check"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/olillin/timesend.git"
+    },
+    "author": "olillin",
+    "license": "MIT",
+    "packageManager": "pnpm@10.28.0",
+    "dependencies": {
+        "@types/cookie-session": "^2.0.49",
+        "body-parser": "^2.2.2",
+        "cookie-session": "^2.1.1",
+        "express": "^4.22.1",
+        "google-auth-library": "^10.6.2",
+        "googleapis": "^105.0.0",
+        "iamcal": "^4.1.1",
+        "pako": "^2.1.0",
+        "typescript": "^5.9.3"
+    },
+    "devDependencies": {
+        "@types/body-parser": "^1.19.6",
+        "@types/express": "^5.0.6",
+        "@types/node": "^22.19.15",
+        "@types/pako": "^2.0.4",
+        "oxfmt": "^0.41.0",
+        "oxlint": "^1.56.0",
+        "oxlint-tsgolint": "^0.17.0",
+        "rimraf": "^6.1.3",
+        "rolldown": "1.0.0-rc.10",
+        "vitest": "^4.1.0"
+    }
 }

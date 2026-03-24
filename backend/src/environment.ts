@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto"
+import { randomBytes } from 'crypto'
 
 export interface EnvironmentVariables {
     PORT?: number
@@ -12,7 +12,12 @@ export type Concrete<Type> = {
 
 export const DEFAULT_ENVIRONMENT: Concrete<EnvironmentVariables> = {
     PORT: 8080,
-    SECRET: randomBytes(64).toString('base64')
+    SECRET: randomBytes(64).toString('base64'),
 }
 
-export const ENVIRONMENT: Concrete<EnvironmentVariables> = Object.assign(Object.assign({}, DEFAULT_ENVIRONMENT), process.env as EnvironmentVariables)
+export const ENVIRONMENT: Concrete<EnvironmentVariables> = Object.assign(
+    Object.assign({}, DEFAULT_ENVIRONMENT),
+    process.env as EnvironmentVariables
+)
+
+export const CALENDAR_MIME_TYPE = 'text/calendar'
