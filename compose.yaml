@@ -1,0 +1,13 @@
+# This compose file is an example of how to run TimeSend in production using
+# the latest Docker image.
+name: timesend
+
+services:
+    server:
+        image: ghcr.io/olillin/timesend:latest
+        restart: always
+        volumes:
+            # Mount Google credentials
+            - ./credentials.json:/app/credentials.json
+        ports:
+            - '8080:8080'
