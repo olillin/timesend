@@ -1,6 +1,6 @@
 {
     "name": "timesend",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "description": "Send calendar events through a link",
     "homepage": "https://timesend.olillin.com",
     "private": true,
